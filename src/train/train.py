@@ -71,7 +71,7 @@ class EarlyStopping:
 def train(pre_train_model, batch_size, criterion, device):
     model = pre_train_model.to(device)
     # 指定损失函数，可以是其他损失函数，根据训练要求决定
-    # criterion = nn.CrossEntropyLoss()  # 交叉熵
+    criterion = nn.CrossEntropyLoss()  # 交叉熵
     # 指定优化器，可以是其他
     optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)
     # 初始化 early_stopping 对象
@@ -91,6 +91,7 @@ def train(pre_train_model, batch_size, criterion, device):
         pin_memory=True,
         shuffle=True
     )
+
 
     test_data = data_set(False)
     # 把dataset放到DataLoader中
