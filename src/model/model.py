@@ -237,7 +237,7 @@ class ConvBlock(nn.Module):
 class EncoderBlock(nn.Module):
     def __init__(self, in_channels, model_depth=4, pool_size=2):
         super(EncoderBlock, self).__init__()
-        self.root_feat_maps = 16
+        self.root_feat_maps = 4
         self.num_conv_blocks = 2
         # self.module_list = nn.ModuleList()
         self.module_dict = nn.ModuleDict()
@@ -266,12 +266,12 @@ class EncoderBlock(nn.Module):
         for k, op in self.module_dict.items():
             if k.startswith("conv"):
                 x = op(x)
-                print(k, x.shape)
+                # print(k, x.shape)
                 if k.endswith("1"):
                     down_sampling_features.append(x)
             elif k.startswith("max_pooling"):
                 x = op(x)
-                print(k, x.shape)
+                # print(k, x.shape)
 
         return x, down_sampling_features
 
@@ -280,7 +280,7 @@ class DecoderBlock(nn.Module):
     def __init__(self, out_channels, model_depth=4):
         super(DecoderBlock, self).__init__()
         self.num_conv_blocks = 2
-        self.num_feat_maps = 16
+        self.num_feat_maps = 4
         # user nn.ModuleDict() to store ops
         self.module_dict = nn.ModuleDict()
 
@@ -333,7 +333,7 @@ class UnetModel(nn.Module):
         x, downsampling_features = self.encoder(x)
         x = self.decoder(x, downsampling_features)
         x = self.sigmoid(x)
-        print("Final output shape: ", x.shape)
+        # print("Final output shape: ", x.shape)
         return x
 
 

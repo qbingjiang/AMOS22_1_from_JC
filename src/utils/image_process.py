@@ -6,6 +6,9 @@ from src.model.model import *
 import os
 import nibabel as nib
 from einops import rearrange
+from src.process.data_load import *
+from torch.utils.data import DataLoader
+
 
 def a(images, outputs):
     images_ori = images.data.squeeze().cpu().numpy()
@@ -43,16 +46,8 @@ def array_to_img(x, scale=True):
         raise ValueError('Unsupported channel number:', x.shape[2])
 
 
-# model = Model(1, 16).cpu()
-# model.load_state_dict(torch.load(os.path.join('..', 'checkpoints', 'auto_save', 'model_onehot.pth')))
-# x_image = nib.load(os.path.join('..', '..', 'data', 'AMOS22', './imagesTr/amos_0600.nii.gz')).dataobj
-# # w,h,d
-# x_image = torch.unsqueeze(torch.unsqueeze(torch.Tensor(np.array(x_image)).float(), 0), 0).cpu()
-# y = model(x_image)
-# out = torch.argmax(y, 1)
-# out = torch.squeeze(torch.squeeze(out, 0), 0)
-y = torch.rand([1, 1, 15, 150, 150])
-z = torch.rand([1, 1, 15, 150, 150])
+
+
 def bind(a, b):
     '''
         a shape -> b 1 d w h
@@ -62,8 +57,8 @@ def bind(a, b):
     '''
     a = a.data.squeeze().cpu().numpy()
     b = b.data.squeeze().cpu().numpy()
-    ori_image = np.expand_dims(a[int(a.shape[0]/2), :, :], -1)
-    mask_image = np.expand_dims(b[int(b.shape[0]/2), :, :], -1)
+    ori_image = np.expand_dims(a[int(a.shape[0] / 2), :, :], -1)
+    mask_image = np.expand_dims(b[int(b.shape[0] / 2), :, :], -1)
     # ori_image = rearrange(ori_image, 'w h -> w h c')
     # mask_image = rearrange(mask_image, 'w h -> w h c')
     ori_image = array_to_img(ori_image)
@@ -77,4 +72,4 @@ def bind(a, b):
     img.save('..' + '/result_overlap/pt_{}_compare_{}.png'.format(1, 2))
 
 
-bind(y,z)
+

@@ -71,13 +71,13 @@ class EarlyStopping:
 def train(pre_train_model, batch_size, criterion, device):
     model = pre_train_model.to(device)
     # 指定损失函数，可以是其他损失函数，根据训练要求决定
-    criterion = nn.CrossEntropyLoss()  # 交叉熵
+    # criterion = nn.CrossEntropyLoss()  # 交叉熵
     # 指定优化器，可以是其他
     optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)
     # 初始化 early_stopping 对象
     patience = 5  # 当验证集损失在连续20次训练周期中都没有得到降低时，停止模型训练，以防止模型过拟合
     early_stopping = EarlyStopping(patience, verbose=True, path=os.path.join('..', 'checkpoints', 'auto_save',
-                                                                             'model_onehot.pth'))  # 关于 EarlyStopping 的代码可先看博客后面的内容
+                                                                             'model_onehot2.pth'))  # 关于 EarlyStopping 的代码可先看博客后面的内容
 
     # batch_size = 64  # 或其他，该参数属于超参，对于如何选择超参，你可以参考下我的上一篇博客
     n_epochs = 100  # 可以设置大一些，毕竟你是希望通过 early stopping 来结束模型训练
@@ -155,6 +155,6 @@ def train(pre_train_model, batch_size, criterion, device):
 
 
 if __name__ == '__main__':
-    model = Model(1, 16)
+    model = UnetModel(1, 16, 6)
     # model.load_state_dict(torch.load(os.path.join('..', 'checkpoints', 'auto_save', 'model_onehot.pth')))
     model = train(model, 1, DiceLoss(), torch.device('cuda'))
