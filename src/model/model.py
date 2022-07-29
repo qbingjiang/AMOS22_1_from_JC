@@ -318,6 +318,7 @@ class DecoderBlock(nn.Module):
         return x
 
 
+
 class UnetModel(nn.Module):
 
     def __init__(self, in_channels, out_channels, model_depth=4, final_activation="softmax"):
