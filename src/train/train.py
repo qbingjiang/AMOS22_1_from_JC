@@ -92,7 +92,6 @@ def train(pre_train_model, batch_size, criterion, device):
         shuffle=True
     )
 
-
     test_data = data_set(False)
     # 把dataset放到DataLoader中
     test_loader = DataLoader(
