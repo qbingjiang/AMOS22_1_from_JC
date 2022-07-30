@@ -75,7 +75,7 @@ def train(pre_train_model, batch_size, criterion, device):
     # 指定优化器，可以是其他
     optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)
     # 初始化 early_stopping 对象
-    patience = 5  # 当验证集损失在连续20次训练周期中都没有得到降低时，停止模型训练，以防止模型过拟合
+    patience = 10  # 当验证集损失在连续20次训练周期中都没有得到降低时，停止模型训练，以防止模型过拟合
     early_stopping = EarlyStopping(patience, verbose=True, path=os.path.join('..', 'checkpoints', 'auto_save',
                                                                              'model_onehot2.pth'))  # 关于 EarlyStopping 的代码可先看博客后面的内容
 
@@ -139,7 +139,7 @@ def train(pre_train_model, batch_size, criterion, device):
             PRED = model(test.float())
             loss = criterion(PRED, target.float())
             v_loss.append(loss.item())
-        valid_loss.append(np.mean(t_loss))
+        valid_loss.append(np.mean(v_loss))
         early_stopping(np.mean(v_loss), model)
         # 若满足 early stopping 要求
         if early_stopping.early_stop:
@@ -156,5 +156,5 @@ def train(pre_train_model, batch_size, criterion, device):
 
 if __name__ == '__main__':
     model = UnetModel(1, 16, 6)
-    # model.load_state_dict(torch.load(os.path.join('..', 'checkpoints', 'auto_save', 'model_onehot.pth')))
+    model.load_state_dict(torch.load(os.path.join('..', 'checkpoints', 'auto_save', 'model_onehot2.pth')))
     model = train(model, 1, DiceLoss(), torch.device('cuda'))

@@ -17,7 +17,9 @@ def a(images, outputs):
     images_ori = images_ori.convert("RGB")
     image_mask = outputs[0].data.squeeze().cpu().numpy()
     image_mask = Image.fromarray(image_mask.astype('uint8'), 'P')
-    palettedata = [0, 0, 0, 102, 0, 255, 0, 255, 176]
+    palettedata = [0, 0, 0, 102, 0, 255, 0, 255, 176, 51, 255, 204, 184, 138, 0, 255, 102, 51, 102, 51, 255, 51, 255,
+                   102, 153, 51, 102, 102, 51, 153, 255, 20, 20, 20, 255, 255, 194, 10, 255, 51, 51, 153, 255, 255, 61,
+                   255, 0, 128]
     image_mask.putpalette(palettedata)
     image_mask = image_mask.convert('RGB')
     img = Image.blend(images_ori, image_mask, 0.7)  # blend_img = img1 * (1 – 0.3) + img2* alpha
@@ -46,8 +48,6 @@ def array_to_img(x, scale=True):
         raise ValueError('Unsupported channel number:', x.shape[2])
 
 
-
-
 def bind(a, b):
     '''
         a shape -> b 1 d w h
@@ -63,13 +63,12 @@ def bind(a, b):
     # mask_image = rearrange(mask_image, 'w h -> w h c')
     ori_image = array_to_img(ori_image)
     mask_image = array_to_img(mask_image)
-    palettedata = [0, 0, 0, 102, 0, 255, 0, 255, 176]
+    palettedata = [0, 0, 0, 102, 0, 255, 0, 255, 176, 51, 255, 204, 184, 138, 0, 255, 102, 51, 102, 51, 255, 51, 255,
+                   102, 153, 51, 102, 102, 51, 153, 255, 20, 20, 20, 255, 255, 194, 10, 255, 51, 51, 153, 255, 255, 61,
+                   255, 0, 128]
     ori_image.putpalette(palettedata)
     ori_image = ori_image.convert('RGB')
     mask_image.putpalette(palettedata)
     mask_image = mask_image.convert('RGB')
     img = Image.blend(ori_image, mask_image, 0.7)  # blend_img = img1 * (1 – 0.3) + img2* alpha
     img.save('..' + '/result_overlap/pt_{}_compare_{}.png'.format(1, 2))
-
-
-
