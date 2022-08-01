@@ -118,25 +118,47 @@ def acc(model):
             # for index in range(16):
             #     if index != sep_class:
             #         j[j == index] = 0
-            j = one_hot(j, 16)
-            j = rearrange(j, 'b w h d c -> b c w h d')
+            # j = one_hot(j, 16)
+            # j = rearrange(j, 'b w h d c -> b c w h d')
             z = m(i)
-            y = torch.argmax(z, dim=1)
+            z = torch.argmax(z, dim=1)
             # for index in range(16):
             #     if index != sep_class:
             #         z[z == index] = 0
-            acc.append(dice_coef(z, j))
+            j = rearrange(j, 'c d w h -> w h d c').squeeze(-1)
+            z = rearrange(z, 'c d w h -> w h d c').squeeze(-1)
+            acc.append(cal_subject_level_dice(z, j, 16))
         print(np.mean(acc))
 
+def cal_subject_level_dice(prediction, target, class_num=2):# class_num是你分割的目标的类别个数
+    '''
+    step1: calculate the dice of each category
+    step2: remove the dice of the empty category and background, and then calculate the mean of the remaining dices.
+    :param prediction: the automated segmentation result, a numpy array with shape of (h, w, d)
+    :param target: the ground truth mask, a numpy array with shape of (h, w, d)
+    :param class_num: total number of categories
+    :return:
+    '''
+    eps = 1e-10
+    empty_value = -1.0
+    dscs = empty_value * np.ones((class_num), dtype=np.float32)
+    for i in range(0, class_num):
+        if i not in target and i not in prediction:
+            continue
+        target_per_class = np.where(target == i, 1, 0).astype(np.float32)
+        prediction_per_class = np.where(prediction == i, 1, 0).astype(np.float32)
 
-import PIL
-
-from PIL import Image
-
-import SimpleITK as sitk
+        tp = np.sum(prediction_per_class * target_per_class)
+        fp = np.sum(prediction_per_class) - tp
+        fn = np.sum(target_per_class) - tp
+        dsc = 2 * tp / (2 * tp + fp + fn + eps)
+        dscs[i] = dsc
+    dscs = np.where(dscs == -1.0, np.nan, dscs)
+    subject_level_dice = np.nanmean(dscs[1:])
+    return subject_level_dice
 
 if __name__ == '__main__':
-    m = Model(1, 16)
-    m.load_state_dict(torch.load(os.path.join(os.path.join('..', 'checkpoints', 'auto_save', 'model_onehot.pth'))))
+    m = UnetModel(1, 16, 6)
+    m.load_state_dict(torch.load(os.path.join(os.path.join('..', 'checkpoints', 'auto_save', 'model_onehot_e-3.pth'))))
     m.cpu()
     acc(m)

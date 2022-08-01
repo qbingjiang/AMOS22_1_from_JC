@@ -72,3 +72,25 @@ def bind(a, b):
     mask_image = mask_image.convert('RGB')
     img = Image.blend(ori_image, mask_image, 0.7)  # blend_img = img1 * (1 – 0.3) + img2* alpha
     img.save('..' + '/result_overlap/pt_{}_compare_{}.png'.format(1, 2))
+
+
+def show_two(a, b, file_name, slices=1.0/2):
+    a = a.data.squeeze().cpu().numpy()
+    b = b.data.squeeze().cpu().numpy()
+    ori_image = np.expand_dims(a[int(a.shape[0] * slices), :, :], -1)
+    mask_image = np.expand_dims(b[int(b.shape[0] * slices), :, :], -1)
+    img_show = np.concatenate((ori_image, mask_image), axis=0)
+    # ori_image = rearrange(ori_image, 'w h -> w h c')
+    # mask_image = rearrange(mask_image, 'w h -> w h c')
+    # ori_image = array_to_img(ori_image)
+    # mask_image = array_to_img(mask_image)
+    image_show = array_to_img(img_show)
+    palettedata = [0, 0, 0, 102, 0, 255, 0, 255, 176, 51, 255, 204, 184, 138, 0, 255, 102, 51, 102, 51, 255, 51, 255,
+                   102, 153, 51, 102, 102, 51, 153, 255, 20, 20, 20, 255, 255, 194, 10, 255, 51, 51, 153, 255, 255, 61,
+                   255, 0, 128]
+    image_show.putpalette(palettedata)
+    image_show = image_show.convert('RGB')
+    if file_name != '' or None:
+        image_show.save('..' + '/result_overlap/{}.png'.format(file_name))
+    else:
+        image_show.save('..' + '/result_overlap/pt_{}_compare_{}.png'.format(1, 2))

@@ -34,9 +34,13 @@ class data_set(Dataset):
             sitk.ReadImage(os.path.join(self.path, str(self.labels_path[index], 'utf-8')))).astype(np.int8)
         x = np.array(x)
         y = np.array(y)
+        x = self.norm(x)
         x = np.expand_dims(x, 0)
         # y = np.expand_dims(y, 0)
         x = resize(x, (1, 64, 256, 256), preserve_range=True)
         y = np.round(resize(y, (64, 256, 256), preserve_range=True))
         return x, y
+
+    def norm(self, x):
+        return (x - np.min(x)) / (np.max(x) - np.min(x))
 
