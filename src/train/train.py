@@ -125,8 +125,8 @@ def train(pre_train_model, batch_size, criterion, device):
             loss = criterion(output, target.float())  # 计算损失
             loss.backward()  # 计算损失对于各个参数的梯度
             optimizer.step()  # 执行单步优化操作：更新参数
-            parb.set_description('epoch:{}, loss:{}'.format(epoch, loss.item()))
             t_loss.append(loss.item())
+            parb.set_description('epoch:{}, loss_avg:{}'.format(epoch, np.mean(t_loss)))
         # ----------------------------------------------------
         train_loss.append(np.mean(t_loss))
         model.eval()  # 设置模型为评估/测试模式
@@ -155,6 +155,7 @@ def train(pre_train_model, batch_size, criterion, device):
 
 
 if __name__ == '__main__':
-    model = UnetModel(1, 16, 6)
+    class_num = 16
+    model = UnetModel(1, class_num, 6)
     # model.load_state_dict(torch.load(os.path.join('..', 'checkpoints', 'auto_save', 'model_onehot.pth')))
-    model = train(model, 1, DiceLoss(), torch.device('cuda'))
+    model = train(model, 1, Generalized_Dice_loss([0 for _ in range(class_num)]), torch.device('cuda'))
