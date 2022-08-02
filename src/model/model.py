@@ -354,7 +354,7 @@ class ConvTranspose(nn.Module):
 if __name__ == '__main__':
     x = torch.rand(size=[1, 1, 64, 256, 256])
     # skip = torch.rand(size=[1, 256, 14, 14, 1])
-    model = UnetModel(1, 16, model_depth=3)
+    model = UnetModel(1, 16, model_depth=4)
     # button shape 256,13,13,1
     y = model(x)
     print(y.shape)
