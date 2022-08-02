@@ -164,6 +164,6 @@ def train(pre_train_model, batch_size, criterion, device):
 if __name__ == '__main__':
     class_num = 16
     model = UnetModel(1, class_num, 6)
-    # model.load_state_dict(torch.load(os.path.join('..', 'checkpoints', 'auto_save', 'Generalized_Dice_loss_e-3.pth')))
+    model.load_state_dict(torch.load(os.path.join('..', 'checkpoints', 'auto_save', 'Generalized_Dice_loss_e-3.pth')))
     model = train(model, 1, Generalized_Dice_loss([2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4]),
                   torch.device('cuda'))
