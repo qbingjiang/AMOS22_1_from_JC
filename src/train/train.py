@@ -77,7 +77,7 @@ def train(pre_train_model, batch_size, criterion, device):
     # 初始化 early_stopping 对象
     patience = 20  # 当验证集损失在连续20次训练周期中都没有得到降低时，停止模型训练，以防止模型过拟合
     early_stopping = EarlyStopping(patience, verbose=True, path=os.path.join('..', 'checkpoints', 'auto_save',
-                                                                             'model_onehot_e-3.pth'))  # 关于 EarlyStopping 的代码可先看博客后面的内容
+                                                                             'Generalized_Dice_loss_e-3.pth'))  # 关于 EarlyStopping 的代码可先看博客后面的内容
 
     # batch_size = 64  # 或其他，该参数属于超参，对于如何选择超参，你可以参考下我的上一篇博客
     n_epochs = 1000  # 可以设置大一些，毕竟你是希望通过 early stopping 来结束模型训练
@@ -158,4 +158,4 @@ if __name__ == '__main__':
     class_num = 16
     model = UnetModel(1, class_num, 6)
     # model.load_state_dict(torch.load(os.path.join('..', 'checkpoints', 'auto_save', 'model_onehot.pth')))
-    model = train(model, 1, Generalized_Dice_loss([0 for _ in range(class_num)]), torch.device('cuda'))
+    model = train(model, 1, Generalized_Dice_loss([1 for _ in range(class_num)]), torch.device('cuda'))

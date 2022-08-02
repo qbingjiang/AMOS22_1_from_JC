@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-
+import numpy as np
 
 class DiceLoss(nn.Module):
     def __init__(self):
@@ -32,7 +32,7 @@ class Generalized_Dice_loss(nn.Module):
         smooth = 1.
         loss = 0.
         n_classes = y_pred.shape[1]
-
+        class_weights = np.asarray(class_weights, dtype=float)
         for c in range(0, n_classes):  # pass 0 because 0 is background
             pred_flat = y_pred[:, c].reshape(-1)
             true_flat = y_true[:, c].reshape(-1)
@@ -46,4 +46,4 @@ class Generalized_Dice_loss(nn.Module):
         return loss
 
     def forward(self, y_pred, y_true):
-        return self.Generalized_Dice_Loss(y_pred, y_true)
+        return self.Generalized_Dice_Loss(y_pred, y_true, self.class_weight)
